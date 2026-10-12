@@ -44,11 +44,7 @@
             errorProvider1 = new ErrorProvider(components);
             panel1 = new Panel();
             splitContainer1 = new SplitContainer();
-<<<<<<< HEAD
             dgvDatos = new DataGridView();
-=======
-            dataGridView1 = new DataGridView();
->>>>>>> efa72e87fb2a32ead237e0b3f98267a09e5e65aa
             btnEditarBombon = new Button();
             btnEliminarBombon = new Button();
             btnAgregarBombon = new Button();
@@ -215,7 +211,6 @@
             // 
             // dgvDatos
             // 
-<<<<<<< HEAD
             dgvDatos.AllowUserToAddRows = false;
             dgvDatos.AllowUserToDeleteRows = false;
             dgvDatos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -226,18 +221,6 @@
             dgvDatos.ReadOnly = true;
             dgvDatos.Size = new Size(533, 238);
             dgvDatos.TabIndex = 0;
-=======
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { colId, colBombon, colCantidad });
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(0, 0);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.ReadOnly = true;
-            dataGridView1.Size = new Size(533, 238);
-            dataGridView1.TabIndex = 0;
->>>>>>> efa72e87fb2a32ead237e0b3f98267a09e5e65aa
             // 
             // btnEditarBombon
             // 
@@ -302,11 +285,7 @@
             // 
             // colId
             // 
-<<<<<<< HEAD
             colId.DataPropertyName = "BombonId";
-=======
-            colId.DataPropertyName = "colBombonId";
->>>>>>> efa72e87fb2a32ead237e0b3f98267a09e5e65aa
             colId.HeaderText = "Id";
             colId.Name = "colId";
             colId.ReadOnly = true;
@@ -316,11 +295,7 @@
             // 
             colBombon.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             colBombon.DataPropertyName = "NombreBombon";
-<<<<<<< HEAD
             colBombon.HeaderText = "Bombón";
-=======
-            colBombon.HeaderText = "Bombön";
->>>>>>> efa72e87fb2a32ead237e0b3f98267a09e5e65aa
             colBombon.Name = "colBombon";
             colBombon.ReadOnly = true;
             // 
@@ -386,11 +361,7 @@
         private ErrorProvider errorProvider1;
         private Panel panel1;
         private SplitContainer splitContainer1;
-<<<<<<< HEAD
         private DataGridView dgvDatos;
-=======
-        private DataGridView dataGridView1;
->>>>>>> efa72e87fb2a32ead237e0b3f98267a09e5e65aa
         private Button btnAgregarBombon;
         private Button btnEliminarBombon;
         private Button btnEditarBombon;
