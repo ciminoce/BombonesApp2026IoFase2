@@ -45,15 +45,15 @@
             panel1 = new Panel();
             splitContainer1 = new SplitContainer();
             dgvDatos = new DataGridView();
+            colId = new DataGridViewTextBoxColumn();
+            colBombon = new DataGridViewTextBoxColumn();
+            colCantidad = new DataGridViewTextBoxColumn();
             btnEditarBombon = new Button();
             btnEliminarBombon = new Button();
             btnAgregarBombon = new Button();
             txtCantidadBombones = new TextBox();
             txtSurtida = new TextBox();
             label1 = new Label();
-            colId = new DataGridViewTextBoxColumn();
-            colBombon = new DataGridViewTextBoxColumn();
-            colCantidad = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)nudStock).BeginInit();
             ((System.ComponentModel.ISupportInitialize)errorProvider1).BeginInit();
             panel1.SuspendLayout();
@@ -153,9 +153,11 @@
             // nudStock
             // 
             nudStock.Location = new Point(542, 28);
+            nudStock.Minimum = new decimal(new int[] { 5, 0, 0, 0 });
             nudStock.Name = "nudStock";
             nudStock.Size = new Size(134, 23);
             nudStock.TabIndex = 1;
+            nudStock.Value = new decimal(new int[] { 5, 0, 0, 0 });
             // 
             // chkActivo
             // 
@@ -222,6 +224,31 @@
             dgvDatos.Size = new Size(533, 238);
             dgvDatos.TabIndex = 0;
             // 
+            // colId
+            // 
+            colId.DataPropertyName = "BombonId";
+            colId.HeaderText = "Id";
+            colId.Name = "colId";
+            colId.ReadOnly = true;
+            colId.Visible = false;
+            // 
+            // colBombon
+            // 
+            colBombon.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            colBombon.DataPropertyName = "NombreBombon";
+            colBombon.HeaderText = "Bombón";
+            colBombon.Name = "colBombon";
+            colBombon.ReadOnly = true;
+            // 
+            // colCantidad
+            // 
+            colCantidad.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            colCantidad.DataPropertyName = "CantidadBombon";
+            colCantidad.HeaderText = "Cantidad";
+            colCantidad.Name = "colCantidad";
+            colCantidad.ReadOnly = true;
+            colCantidad.Width = 80;
+            // 
             // btnEditarBombon
             // 
             btnEditarBombon.Image = Properties.Resources.edit_property_24px;
@@ -282,31 +309,6 @@
             label1.Size = new Size(67, 15);
             label1.TabIndex = 6;
             label1.Text = "¿Es surtida?";
-            // 
-            // colId
-            // 
-            colId.DataPropertyName = "BombonId";
-            colId.HeaderText = "Id";
-            colId.Name = "colId";
-            colId.ReadOnly = true;
-            colId.Visible = false;
-            // 
-            // colBombon
-            // 
-            colBombon.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            colBombon.DataPropertyName = "NombreBombon";
-            colBombon.HeaderText = "Bombón";
-            colBombon.Name = "colBombon";
-            colBombon.ReadOnly = true;
-            // 
-            // colCantidad
-            // 
-            colCantidad.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            colCantidad.DataPropertyName = "CantidadBombon";
-            colCantidad.HeaderText = "Cantidad";
-            colCantidad.Name = "colCantidad";
-            colCantidad.ReadOnly = true;
-            colCantidad.Width = 80;
             // 
             // frmCajaAe
             // 

@@ -29,6 +29,7 @@ namespace BombonesApp2026.Windows.Classes
                 {
                     BombonId = bombon.BombonId,
                     NombreBombon=bombon.NombreBombon,
+                    PrecioBombon=bombon.PrecioBombon,
                     CantidadBombon = cantidad
                 });
                 return;
