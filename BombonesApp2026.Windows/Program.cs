@@ -27,12 +27,15 @@ namespace BombonesApp2026.Windows
                 services.AddTransient(frm);
             }
 
-            var provider=services.BuildServiceProvider();
+            using (var provider = services.BuildServiceProvider())
+            {
+                // To customize application configuration such as set high DPI settings or default font,
+                // see https://aka.ms/applicationconfiguration.
+                ApplicationConfiguration.Initialize();
+                Application.Run(provider.GetRequiredService<frmLogin>());
 
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-            Application.Run(provider.GetRequiredService<frmLogin>());
+            }
+
         }
     }
 }
