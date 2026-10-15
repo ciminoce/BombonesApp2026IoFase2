@@ -10,6 +10,5 @@ namespace BombonesApp2026.Datos
         IBombonRepositorio Bombones { get; }
         ICajaRepositorio Cajas { get; }
         void Save();
-        void RollBack();
     }
 }

@@ -53,7 +53,6 @@ namespace CajasApp2026.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result<int>.Failure($"Error al intentar agregar el Caja: {ex.Message}");
             }
         }
@@ -96,7 +95,6 @@ namespace CajasApp2026.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Error al intentar editar el Caja: {ex.Message}");
             }
         }
@@ -117,7 +115,6 @@ namespace CajasApp2026.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Error al intentar borrar el Caja: {ex.Message}");
             }
         }
@@ -236,17 +233,14 @@ namespace CajasApp2026.Servicios.Servicios
             }
             catch (DbUpdateConcurrencyException)
             {
-                _unitOfWork.RollBack();
                 return Result.ConcurrencyFailure("Otro usuario modificó el registro\nLa grilla se recargará automáticamente");
             }
             catch (KeyNotFoundException)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Bombón con ID: {CajaDto.ProductoId} no encontrado");
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Error al intentar borrar un bombón: {ex.Message}");
             }
         }

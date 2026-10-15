@@ -8,8 +8,8 @@ namespace BombonesApp2026.Servicios.Validators
         public CajaUpdateDtoValidator()
         {
             RuleFor(x => x.Nombre)
-    .NotEmpty().WithMessage("El nombre es obligatorio.")
-    .MaximumLength(100).WithMessage("El nombre no puede superar los 100 caracteres.");
+                .NotEmpty().WithMessage("El nombre es obligatorio.")
+                .MaximumLength(100).WithMessage("El nombre no puede superar los 100 caracteres.");
 
             RuleFor(x => x.Descripcion)
                 .MaximumLength(250).WithMessage("La descripción no puede superar los 200 caracteres.");

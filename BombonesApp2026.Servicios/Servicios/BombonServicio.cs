@@ -54,7 +54,6 @@ namespace BombonesApp2026.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result<int>.Failure($"Error al intentar agregar el Bombon: {ex.Message}");
             }
         }
@@ -101,7 +100,6 @@ namespace BombonesApp2026.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Error al intentar editar el Bombon: {ex.Message}");
             }
         }
@@ -122,7 +120,6 @@ namespace BombonesApp2026.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Error al intentar borrar el Bombon: {ex.Message}");
             }
         }
@@ -241,17 +238,14 @@ namespace BombonesApp2026.Servicios.Servicios
             }
             catch (DbUpdateConcurrencyException)
             {
-                _unitOfWork.RollBack();
                 return Result.ConcurrencyFailure("Otro usuario modificó el registro\nLa grilla se recargará automáticamente");
             }
             catch (KeyNotFoundException)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Bombón con ID: {bombonDto.ProductoId} no encontrado");
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Error al intentar borrar un bombón: {ex.Message}");
             }
         }

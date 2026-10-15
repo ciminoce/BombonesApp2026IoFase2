@@ -52,7 +52,6 @@ namespace BombonesApp2026.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result<int>.Failure($"Error al intentar agregar el cliente: {ex.Message}");
             }
         }
@@ -102,7 +101,6 @@ namespace BombonesApp2026.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Error al intentar editar el cliente: {ex.Message}");
             }
         }
@@ -123,7 +121,6 @@ namespace BombonesApp2026.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Error al intentar borrar el cliente: {ex.Message}");
             }
         }

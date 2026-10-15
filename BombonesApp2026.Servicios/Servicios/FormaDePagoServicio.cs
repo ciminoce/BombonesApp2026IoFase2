@@ -51,7 +51,6 @@ namespace BombonesApp2026.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Error al intentar agregar la forma de pago: {ex.Message}");
             }
         }
@@ -90,7 +89,6 @@ namespace BombonesApp2026.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Error al intentar editar la forma de pago: {ex.Message}");
             }
         }
@@ -111,7 +109,6 @@ namespace BombonesApp2026.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Error al intentar borrar la forma de pago: {ex.Message}");
             }
         }

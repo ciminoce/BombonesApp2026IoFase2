@@ -55,7 +55,6 @@ namespace BombonesApp2026.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result<int>.Failure($"Error al intentar agregar un tipo de bombón: {ex.Message}");
             }
         }
@@ -87,17 +86,14 @@ namespace BombonesApp2026.Servicios.Servicios
             }
             catch (DbUpdateConcurrencyException)
             {
-                _unitOfWork.RollBack();
                 return Result.ConcurrencyFailure("Otro usuario modificó el registro.\nLa grilla se recargará automáticamente");
             }
             catch (KeyNotFoundException)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Tipo de bombón con ID {dto.TipoBombonId} no encontrado");
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Error al intentar editar el tipo de bombón: {ex.Message}");
             }
         }
@@ -112,17 +108,14 @@ namespace BombonesApp2026.Servicios.Servicios
             }
             catch (DbUpdateConcurrencyException)
             {
-                _unitOfWork.RollBack();
                 return Result.ConcurrencyFailure("Otro usuario modificó el registro\nLa grilla se recargará automáticamente");
             }
             catch (KeyNotFoundException)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Tipo de bombón con ID: {tipoDto.TipoBombonId} no encontrado");
             }
             catch (Exception ex)
             {
-                _unitOfWork.RollBack();
                 return Result.Failure($"Error al intentar borrar un tipo de bombón: {ex.Message}");
             }
         }
