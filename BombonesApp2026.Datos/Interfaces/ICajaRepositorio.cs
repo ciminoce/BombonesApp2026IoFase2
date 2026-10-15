@@ -1,8 +1,7 @@
-﻿using BombonesApp2026.Datos.Interfaces;
-using BombonesApp2026.Entidades;
+﻿using BombonesApp2026.Entidades;
 using System.Linq.Expressions;
 
-namespace CajaesApp2026.Datos.Interfaces
+namespace BombonesApp2026.Datos.Interfaces
 {
     public interface ICajaRepositorio:IRepositorioConcurrente<Caja>
     {
