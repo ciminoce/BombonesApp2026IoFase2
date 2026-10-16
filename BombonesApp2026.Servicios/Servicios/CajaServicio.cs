@@ -26,30 +26,65 @@ namespace BombonesApp2026.Servicios.Servicios
             _updateValidator = updateValidator;
         }
 
-        public Result<int> Agregar(CajaCreateDto CajaDto)
+        public Result<int> Agregar(CajaCreateDto cajaDto)
         {
             // 1. Validar el DTO directamente
-            var validationResult = _createValidator.Validate(CajaDto);
+            var validationResult = _createValidator.Validate(cajaDto);
             if (!validationResult.IsValid)
             {
-                var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return Result<int>.Failure(errors);
+                var errores = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return Result<int>.Failure(errores);
+            }
+            var listaErrores=new List<string>();
+            foreach (var itemDetalle in cajaDto.Detalles)
+            {
+                if (itemDetalle.CantidadBombon <= 0)
+                {
+                    listaErrores.Add($"La cantidad del bombón {itemDetalle.NombreBombon} es menor a cero");
+                }
+            }
+            foreach (var itemDetalle in cajaDto.Detalles)
+            {
+                var bombon = _unitOfWork.Bombones
+                    .ObtenerPorId(itemDetalle.BombonId);
+                if(bombon is null)
+                {
+                    listaErrores.Add($"El bombón con ID {itemDetalle.BombonId} no existe");
+                }
+                if (!bombon.Activo)
+                {
+                    listaErrores.Add($"El bombón con ID {itemDetalle.BombonId} no se encuentra activo");
+                }
+            }
+            if (listaErrores.Any())
+            {
+                return Result<int>.Failure(listaErrores);
             }
 
-            // 2. Mapear a entidad
-            var Caja = CajaMapper.ToEntidad(CajaDto);
-
-            // 3. Regla de negocio
-            if (_unitOfWork.Cajas.Existe(Caja))
+            // 2. Crear la entidad
+            Caja caja = new Caja
+            {
+                Nombre = cajaDto.Nombre,
+                Descripcion = cajaDto.Descripcion,
+                Stock = cajaDto.Stock,
+                Activo = true
+            };
+            //3. Agregar Detalles a la caja
+            foreach (var item in cajaDto.Detalles)
+            {
+                caja.AgregarBombon(item.BombonId, item.CantidadBombon);
+            }
+            // 4. Regla de negocio
+            if (_unitOfWork.Cajas.Existe(caja))
             {
                 return Result<int>.Failure("El Caja ya existe.");
             }
 
             try
             {
-                _unitOfWork.Cajas.Agregar(Caja);
+                _unitOfWork.Cajas.Agregar(caja);
                 _unitOfWork.Save();
-                return Result<int>.Success(Caja.ProductoId);
+                return Result<int>.Success(caja.ProductoId);
             }
             catch (Exception ex)
             {

@@ -6,6 +6,16 @@ namespace CajaesApp2026.Servicios.Mapeadores
 {
     public static class CajaMapper
     {
+        public static CajaCreateDto ToCreateDto(this CajaUpdateDto cajaDto)
+        {
+            return new CajaCreateDto
+            {
+                Nombre = cajaDto.Nombre,
+                Descripcion = cajaDto.Descripcion,
+                Stock = cajaDto.Stock,
+                Detalles= cajaDto.Detalles
+            };
+        }
         public static CajaDetailDto ToDetailDto(this Caja caja)
         {
             return new CajaDetailDto

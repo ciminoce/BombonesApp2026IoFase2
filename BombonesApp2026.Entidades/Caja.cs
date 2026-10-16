@@ -25,5 +25,29 @@
             string tipoCaja = EsSurtida ? "Surtida" : "Especial";
             return $"Caja ({tipoCaja}): {Nombre} - Precio: {Precio:C2} - Cant. Bombones: {CantidadBombones} unidades";
         }
+        public void AgregarBombon(int bombonId, int cantidad)
+        {
+            if (bombonId <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(bombonId),
+                    "El ID del bombón tiene que ser positivo");
+            }
+            if (cantidad <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(cantidad),
+                    "La cantidad de bombones debe ser mayor a cero");
+            }
+            var detalle=_detalles.FirstOrDefault(d=>d.BombonId== bombonId);
+            if(detalle is null)
+            {
+                _detalles.Add(new DetalleCaja
+                {
+                    BombonId = bombonId,
+                    Cantidad = cantidad
+                });
+                return;
+            }
+            detalle.Cantidad += cantidad;
+        }
     }
 }

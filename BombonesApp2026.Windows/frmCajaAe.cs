@@ -1,9 +1,11 @@
 ﻿using BombonesApp2026.Servicios.DTOs.Caja;
 using BombonesApp2026.Servicios.DTOs.DetalleCaja;
 using BombonesApp2026.Servicios.Intefaces;
+using BombonesApp2026.Servicios.Mapeadores;
 using BombonesApp2026.Windows.Classes;
 using BombonesApp2026.Windows.Helpers;
 using CajaesApp2026.Servicios.Intefaces;
+using CajaesApp2026.Servicios.Mapeadores;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BombonesApp2026.Windows
@@ -13,19 +15,20 @@ namespace BombonesApp2026.Windows
         private CajaUpdateDto? _cajaDto;
         private EditorCaja _editorCaja = null!;
         private BindingSource _bindingSource = new BindingSource();
+        private ServicioMensajes _servicioMensajes = new();
         private readonly ICajaServicio _cajaServicio;
         private readonly IBombonServicio _bombonServicio;
         private readonly IServiceProvider _serviceProvider;
         private bool _esEdicion = false;
 
-        public frmCajaAe(ICajaServicio cajaServicio, 
+        public frmCajaAe(ICajaServicio cajaServicio,
             IBombonServicio bombonServicio,
             IServiceProvider serviceProvider)
         {
             InitializeComponent();
             _cajaServicio = cajaServicio;
-            _bombonServicio= bombonServicio;
-            _serviceProvider= serviceProvider;
+            _bombonServicio = bombonServicio;
+            _serviceProvider = serviceProvider;
             dgvDatos.DataSource = _bindingSource;
 
         }
@@ -66,10 +69,13 @@ namespace BombonesApp2026.Windows
                     if (!_esEdicion)
                     {
 
-                        var cajaCreateDto = new CajaCreateDto();
-                        cajaCreateDto.Nombre = txtNombreCaja.Text;
-                        cajaCreateDto.Descripcion = txtDescripcion.Text;
-                        cajaCreateDto.Precio = decimal.Parse(txtPrecio.Text);
+                        
+                        _cajaDto!.Nombre = txtNombreCaja.Text;
+                        _cajaDto.Descripcion = txtDescripcion.Text;
+                        _cajaDto.Stock = (int)nudStock.Value;
+                        _cajaDto.Detalles = _editorCaja.ObtenerDetalles();
+
+                        CajaCreateDto cajaCreateDto = _cajaDto.ToCreateDto();
 
                         var resultadoAgregar = _cajaServicio.Agregar(cajaCreateDto);
                         if (resultadoAgregar.IsFailure)
@@ -79,14 +85,14 @@ namespace BombonesApp2026.Windows
                         }
                         DataChanged = true;
                         UltimoId = resultadoAgregar.Value;
-                        var respuestaAgregarOtro = MessageBox.Show("Registro agregado\n¿Desea agregar otro?",
-                                "Mensaje", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                                MessageBoxDefaultButton.Button2);
-                        if (respuestaAgregarOtro == DialogResult.No)
+                        if(_servicioMensajes.Confirmar("Registro agregado\n¿Desea agregar otro?"))
+                        {
+                            InicializarControles();
+                        }
+                        else
                         {
                             DialogResult = DialogResult.OK;
                         }
-                        InicializarControles();
 
                     }
                     else
@@ -189,7 +195,7 @@ namespace BombonesApp2026.Windows
         }
         private void btnAgregarBombon_Click(object sender, EventArgs e)
         {
-            using (var frm=_serviceProvider.GetRequiredService<frmManejoBombonCajaAe>())
+            using (var frm = _serviceProvider.GetRequiredService<frmManejoBombonCajaAe>())
             {
                 frm.Text = "Nuevo Detalle";
                 if (frm.ShowDialog() == DialogResult.Cancel) return;
@@ -217,6 +223,64 @@ namespace BombonesApp2026.Windows
             _bindingSource.DataSource = resumen.Detalles.ToList();
             _bindingSource.ResetBindings(false);
 
+        }
+
+        private void btnEliminarBombon_Click(object sender, EventArgs e)
+        {
+            var detalleDto = _bindingSource
+                .ObtenerSeleccionado<DetalleCajaDto>(_servicioMensajes);
+            if (detalleDto is null) return;
+            if (_servicioMensajes.Confirmar($"¿Desea borrar el detalle" +
+                $" del bombón {detalleDto.NombreBombon}?"))
+            {
+                try
+                {
+                    _editorCaja.EliminarBombon(detalleDto.BombonId);
+                    MostrarDatos(_editorCaja.ObtenerResumen());
+                }
+                catch (Exception ex)
+                {
+
+                    _servicioMensajes.Error(ex.Message);
+                }
+
+            }
+        }
+
+        private void btnEditarBombon_Click(object sender, EventArgs e)
+        {
+            var detalleDto = _bindingSource
+                .ObtenerSeleccionado<DetalleCajaDto>(_servicioMensajes);
+            if (detalleDto is null) return;
+            var resultadoConsulta = _bombonServicio
+                .ObtenerPorId(detalleDto.BombonId);
+            if (resultadoConsulta.IsFailure)
+            {
+                _servicioMensajes.Errores(resultadoConsulta.Errors);
+                return;
+            }
+            var bombonListDto = resultadoConsulta.Value;
+            if(bombonListDto is null) return;
+            var bombonComboDto = bombonListDto.ToComboDto();
+            using (var frm=_serviceProvider
+                .GetRequiredService<frmManejoBombonCajaAe>())
+            {
+                frm.Text = "Modificar Cantidad del Bombón";
+                frm.SetDatos(bombonComboDto, detalleDto.CantidadBombon);
+                if (frm.ShowDialog() == DialogResult.Cancel) return;
+                var (bombon, cantidad) = frm.GetDatos();
+                if (bombon is null) return;
+                try
+                {
+                    _editorCaja.ModificarCantidadBombon(bombon, cantidad);
+                    MostrarDatos(_editorCaja.ObtenerResumen());
+                }
+                catch (Exception ex)
+                {
+
+                    _servicioMensajes.Error(ex.Message);
+                }
+            }
         }
     }
 }

@@ -41,6 +41,11 @@ namespace BombonesApp2026.Datos.Repositorios
             return query
                 .Count(tb => string.Compare(tb.Nombre, bombonEnDb.Nombre) <= 0);
         }
-        
+        public override Bombon? ObtenerPorId(int id)
+        {
+            return _context.Bombones
+                .Include(b => b.TipoBombon)
+                .FirstOrDefault(b => b.ProductoId == id);
+        }
     }
 }

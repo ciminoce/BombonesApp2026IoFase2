@@ -5,6 +5,15 @@ namespace BombonesApp2026.Servicios.Mapeadores
 {
     public static class BombonMapper
     {
+        public static BombonComboDto ToComboDto(this BombonListDto bombonDto)
+        {
+            return new BombonComboDto
+            {
+                BombonId = bombonDto.ProductoId,
+                NombreBombon = bombonDto.NombreBombon,
+                PrecioBombon = bombonDto.Precio,
+            };
+        }
         public static BombonComboDto ToComboDto(this Bombon bombon)
         {
             return new BombonComboDto
