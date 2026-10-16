@@ -8,7 +8,7 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace CajasApp2026.Servicios.Servicios
+namespace BombonesApp2026.Servicios.Servicios
 {
     public class CajaServicio : ICajaServicio
     {
