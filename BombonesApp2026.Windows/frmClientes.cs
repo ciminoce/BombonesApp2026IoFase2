@@ -1,5 +1,6 @@
 ﻿using BombonesApp2026.Servicios.Common;
 using BombonesApp2026.Servicios.DTOs.Cliente;
+using BombonesApp2026.Servicios.DTOs.FormaDePago;
 using BombonesApp2026.Servicios.Intefaces;
 using BombonesApp2026.Windows.Helpers;
 using BombonesApp2026.Windows.Helpers.BombonesApp2026.Windows.Helpers;
@@ -11,6 +12,7 @@ namespace BombonesApp2026.Windows
     {
         private readonly IServiceProvider _serviceProvider;
         private BindingSource _bindingSource = new BindingSource();
+        private ServicioMensajes _servicioMensajes = new();
 
         //para paginar
         private EstadoNavegacion _estado = new(10);
@@ -36,13 +38,9 @@ namespace BombonesApp2026.Windows
 
         private void tsbBorrar_Click(object sender, EventArgs e)
         {
-            if (_bindingSource.Current == null)
-            {
-                MessageBox.Show("Debe seleccionar una fila de la grilla",
-                    "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            var clienteListDto = (ClienteListDto)_bindingSource.Current;
+            ClienteListDto? clienteListDto = _bindingSource
+                .ObtenerSeleccionado<ClienteListDto>(_servicioMensajes);
+            if (clienteListDto is null) return;
             using (var scope = _serviceProvider.CreateScope())
             {
                 var clienteServicio = scope.ServiceProvider
@@ -94,13 +92,9 @@ namespace BombonesApp2026.Windows
 
         private void tsbEditar_Click(object sender, EventArgs e)
         {
-            if (_bindingSource.Current == null)
-            {
-                MessageBox.Show("Debe seleccionar una fila de la grilla",
-                    "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            var clienteListDto = (ClienteListDto)_bindingSource.Current;
+            ClienteListDto? clienteListDto = _bindingSource
+                .ObtenerSeleccionado<ClienteListDto>(_servicioMensajes);
+            if (clienteListDto is null) return;
             using (var scope = _serviceProvider.CreateScope())
             {
                 try

@@ -209,7 +209,7 @@ namespace BombonesApp2026.Windows
                 catch (Exception ex)
                 {
 
-                    throw ex;
+                    _servicioMensajes.Error(ex.Message);
                 }
             }
         }

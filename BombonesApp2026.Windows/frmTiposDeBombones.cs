@@ -159,12 +159,10 @@ namespace BombonesApp2026.Windows
 
         private void tsbBorrar_Click(object sender, EventArgs e)
         {
-            if (_bindingSource.Current == null)
-            {
-                _servicioMensajes.Advertencia("Debe seleccionar una fila");
-                return;
-            }
-            TipoBombonListDto tipoListDto = (TipoBombonListDto)_bindingSource.Current;
+            
+            TipoBombonListDto? tipoListDto = _bindingSource
+                .ObtenerSeleccionado<TipoBombonListDto>(_servicioMensajes);
+            if (tipoListDto is null) return;
             using (var scope = _serviceProvider.CreateScope())
             {
                 var tipoBombonServicio = scope.ServiceProvider
@@ -252,13 +250,9 @@ namespace BombonesApp2026.Windows
 
         private void tsbEditar_Click(object sender, EventArgs e)
         {
-            if (_bindingSource.Current == null)
-            {
-                MessageBox.Show("Debe seleccionar una fila de la grilla",
-                    "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            var tipoListDto = (TipoBombonListDto)_bindingSource.Current;
+            TipoBombonListDto? tipoListDto = _bindingSource
+                .ObtenerSeleccionado<TipoBombonListDto>(_servicioMensajes);
+            if (tipoListDto is null) return;
             var seleccionadoId = tipoListDto.TipoBombonId;
             using (var scope = _serviceProvider.CreateScope())
             {

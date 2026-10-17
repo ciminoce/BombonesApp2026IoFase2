@@ -1,6 +1,4 @@
-﻿using BombonesApp2026.Servicios.Common;
-using BombonesApp2026.Servicios.DTOs.Cliente;
-using BombonesApp2026.Servicios.DTOs.FormaDePago;
+﻿using BombonesApp2026.Servicios.DTOs.FormaDePago;
 using BombonesApp2026.Servicios.Intefaces;
 using BombonesApp2026.Windows.Helpers;
 using BombonesApp2026.Windows.Helpers.BombonesApp2026.Windows.Helpers;
@@ -21,6 +19,7 @@ namespace BombonesApp2026.Windows
         private bool esAscendente = true;
         //para filtrar
         private bool? filtroActivo = null;
+        private ServicioMensajes _servicioMensajes = new();
 
         public frmFormasDePago(IServiceProvider serviceProvider)
         {
@@ -36,13 +35,9 @@ namespace BombonesApp2026.Windows
 
         private void tsbBorrar_Click(object sender, EventArgs e)
         {
-            if (_bindingSource.Current == null)
-            {
-                MessageBox.Show("Debe seleccionar una fila de la grilla",
-                    "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            var formaListDto = (FormaDePagoListDto)_bindingSource.Current;
+            FormaDePagoListDto? formaListDto = _bindingSource
+                .ObtenerSeleccionado<FormaDePagoListDto>(_servicioMensajes);
+            if (formaListDto is null) return;
             using (var scope = _serviceProvider.CreateScope())
             {
                 var formaDePagoServicio = scope.ServiceProvider
@@ -94,13 +89,9 @@ namespace BombonesApp2026.Windows
 
         private void tsbEditar_Click(object sender, EventArgs e)
         {
-            if (_bindingSource.Current == null)
-            {
-                MessageBox.Show("Debe seleccionar una fila de la grilla",
-                    "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            var formaListDto = (FormaDePagoListDto)_bindingSource.Current;
+            FormaDePagoListDto? formaListDto = _bindingSource
+                .ObtenerSeleccionado<FormaDePagoListDto>(_servicioMensajes);
+            if (formaListDto is null) return;
             using (var scope = _serviceProvider.CreateScope())
             {
                 try

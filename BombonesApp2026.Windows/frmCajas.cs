@@ -1,4 +1,5 @@
 ﻿using BombonesApp2026.Servicios.DTOs.Caja;
+using BombonesApp2026.Servicios.DTOs.Cliente;
 using BombonesApp2026.Windows.Helpers;
 using BombonesApp2026.Windows.Helpers.BombonesApp2026.Windows.Helpers;
 using CajaesApp2026.Servicios.Intefaces;
@@ -142,12 +143,9 @@ namespace BombonesApp2026.Windows
 
         private void tsbBorrar_Click(object sender, EventArgs e)
         {
-            if (_bindingSource.Current == null)
-            {
-                _servicioMensajes.Advertencia("Debe seleccionar una fila");
-                return;
-            }
-            CajaListDto cajaListDto = (CajaListDto)_bindingSource.Current;
+            CajaListDto? cajaListDto = _bindingSource
+                .ObtenerSeleccionado<CajaListDto>(_servicioMensajes);
+            if (cajaListDto is null) return;
             using (var scope = _serviceProvider.CreateScope())
             {
                 var cajaServicio = scope.ServiceProvider
@@ -236,13 +234,9 @@ namespace BombonesApp2026.Windows
 
         private void tsbEditar_Click(object sender, EventArgs e)
         {
-            if (_bindingSource.Current == null)
-            {
-                MessageBox.Show("Debe seleccionar una fila de la grilla",
-                    "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            var cajaListDto = (CajaListDto)_bindingSource.Current;
+            CajaListDto? cajaListDto = _bindingSource
+                .ObtenerSeleccionado<CajaListDto>(_servicioMensajes);
+            if (cajaListDto is null) return;
             var seleccionadoId = cajaListDto.ProductoId;
             using (var scope = _serviceProvider.CreateScope())
             {

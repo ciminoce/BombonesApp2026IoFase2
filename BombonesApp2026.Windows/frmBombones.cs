@@ -1,5 +1,6 @@
 ﻿using BombonesApp2026.Servicios.Common;
 using BombonesApp2026.Servicios.DTOs.Bombon;
+using BombonesApp2026.Servicios.DTOs.Cliente;
 using BombonesApp2026.Servicios.Intefaces;
 using BombonesApp2026.Windows.Helpers;
 using BombonesApp2026.Windows.Helpers.BombonesApp2026.Windows.Helpers;
@@ -164,12 +165,9 @@ namespace BombonesApp2026.Windows
 
         private void tsbBorrar_Click(object sender, EventArgs e)
         {
-            if (_bindingSource.Current == null)
-            {
-                _servicioMensajes.Advertencia("Debe seleccionar una fila");
-                return;
-            }
-            BombonListDto bombonListDto = (BombonListDto)_bindingSource.Current;
+            BombonListDto? bombonListDto = _bindingSource
+                .ObtenerSeleccionado<BombonListDto>(_servicioMensajes);
+            if (bombonListDto is null) return;
             using (var scope = _serviceProvider.CreateScope())
             {
                 var bombonServicio = scope.ServiceProvider
