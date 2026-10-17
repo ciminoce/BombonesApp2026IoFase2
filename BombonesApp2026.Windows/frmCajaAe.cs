@@ -80,7 +80,7 @@ namespace BombonesApp2026.Windows
                         var resultadoAgregar = _cajaServicio.Agregar(cajaCreateDto);
                         if (resultadoAgregar.IsFailure)
                         {
-                            ErrorHelper.MostrarErrores(resultadoAgregar.Errors);
+                            _servicioMensajes.Errores(resultadoAgregar.Errors);
                             return;
                         }
                         DataChanged = true;
@@ -109,7 +109,7 @@ namespace BombonesApp2026.Windows
                             .Editar(_cajaDto);
                         if (resultadoEditar.IsConcurrencyConflict)
                         {
-                            ErrorHelper.MostrarErrores(resultadoEditar.Errors);
+                            _servicioMensajes.Errores(resultadoEditar.Errors);
 
                             ConcurrencyConflict = true;
                             DialogResult = DialogResult.Cancel;
@@ -119,21 +119,18 @@ namespace BombonesApp2026.Windows
                         }
                         if (resultadoEditar.IsFailure)
                         {
-                            ErrorHelper.MostrarErrores(resultadoEditar.Errors);
+                            _servicioMensajes.Errores(resultadoEditar.Errors);
                             return;
                         }
                         DataChanged = true;
-                        MessageBox.Show("Registro editado satisfactoriamente",
-                            "Mensaje",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        _servicioMensajes.Informacion("Registro editado satisfactoriamente");
                         DialogResult = DialogResult.OK;
                     }
                 }
                 catch (Exception ex)
                 {
 
-                    MessageBox.Show(ex.Message,
-                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _servicioMensajes.Error(ex.Message);
                 }
             }
         }

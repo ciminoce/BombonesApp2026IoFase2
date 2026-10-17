@@ -9,6 +9,7 @@ namespace BombonesApp2026.Windows
     {
         private readonly IBombonServicio _bombonServicio;
         private BombonComboDto? _bombonSeleccionado;
+        private ServicioMensajes _servicioMensajes = new();
         private int _cantidadBombones;
         public frmManejoBombonCajaAe(IBombonServicio bombonServicio)
         {
@@ -38,7 +39,7 @@ namespace BombonesApp2026.Windows
                 .ObtenerDatosCombo(BombonDefault.Seleccione, false);
             if (respuestaConsulta.IsFailure)
             {
-                ErrorHelper.MostrarErrores(respuestaConsulta.Errors);
+                _servicioMensajes.Errores(respuestaConsulta.Errors);
                 return;
             }
             var listaCbo = respuestaConsulta.Value!;

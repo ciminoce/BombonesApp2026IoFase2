@@ -1,5 +1,6 @@
 ﻿using BombonesApp2026.Entidades;
 using BombonesApp2026.Windows.Classes;
+using BombonesApp2026.Windows.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BombonesApp2026.Windows
@@ -7,6 +8,7 @@ namespace BombonesApp2026.Windows
     public partial class frmLogin : Form
     {
         private readonly IServiceProvider _provider;
+        private ServicioMensajes _servicioMensajes = new();
         public frmLogin(IServiceProvider provider)
         {
             InitializeComponent();
@@ -15,7 +17,7 @@ namespace BombonesApp2026.Windows
 
         private void btnSalir_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show("Fin de la Aplicación", "Salida",
+            //_servicioMensajes.Informacion("Fin de la Aplicación", "Salida",
             //    MessageBoxButtons.OK, MessageBoxIcon.Information);
             Close();
         }
@@ -29,8 +31,7 @@ namespace BombonesApp2026.Windows
                         u.Password == txtClave.Text);
                 if (usuario is null)
                 {
-                    MessageBox.Show("Usuario inexistente o datos no válidos", "Advertencia",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    _servicioMensajes.Advertencia("Usuario inexistente o datos no válidos");
                     txtUsuario.SelectAll();
                     txtUsuario.Select();
                     return;

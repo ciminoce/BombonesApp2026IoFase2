@@ -1,6 +1,5 @@
 ﻿using BombonesApp2026.Entidades.Enums;
 using BombonesApp2026.Servicios.DTOs.Bombon;
-using BombonesApp2026.Servicios.DTOs.Caja;
 using BombonesApp2026.Servicios.Intefaces;
 using BombonesApp2026.Windows.Helpers;
 
@@ -8,9 +7,10 @@ namespace BombonesApp2026.Windows
 {
     public partial class frmBombonAe : Form
     {
-        private Servicios.DTOs.Bombon.BombonUpdateDto? _bombonDto;
+        private BombonUpdateDto? _bombonDto;
         private readonly IBombonServicio _bombonServicio;
         private readonly ITipoBombonServicio _tipoServicio;
+        private ServicioMensajes _servicioMensajes = new();
         private bool _esEdicion = false;
         public frmBombonAe(IBombonServicio bombonServicio, ITipoBombonServicio tipoServicio)
         {
@@ -81,15 +81,12 @@ namespace BombonesApp2026.Windows
                         var resultadoAgregar = _bombonServicio.Agregar(bombonCreateDto);
                         if (resultadoAgregar.IsFailure)
                         {
-                            ErrorHelper.MostrarErrores(resultadoAgregar.Errors);
+                            _servicioMensajes.Errores(resultadoAgregar.Errors);
                             return;
                         }
                         DataChanged = true;
                         UltimoId = resultadoAgregar.Value;
-                        var respuestaAgregarOtro = MessageBox.Show("Registro agregado\n¿Desea agregar otro?",
-                                "Mensaje", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                                MessageBoxDefaultButton.Button2);
-                        if (respuestaAgregarOtro == DialogResult.No)
+                        if(!_servicioMensajes.Confirmar("Registro agregado\n¿Desea agregar otro?"))
                         {
                             DialogResult = DialogResult.OK;
                         }
@@ -100,7 +97,7 @@ namespace BombonesApp2026.Windows
                     {
                         if (_bombonDto is null)
                         {
-                            _bombonDto = new Servicios.DTOs.Bombon.BombonUpdateDto();
+                            _bombonDto = new BombonUpdateDto();
                         }
                         _bombonDto.Nombre = txtNombreBombon.Text;
                         _bombonDto.Descripcion = txtDescripcion.Text;
@@ -115,7 +112,7 @@ namespace BombonesApp2026.Windows
                             .Editar(_bombonDto);
                         if (resultadoEditar.IsConcurrencyConflict)
                         {
-                            ErrorHelper.MostrarErrores(resultadoEditar.Errors);
+                            _servicioMensajes.Errores(resultadoEditar.Errors);
 
                             ConcurrencyConflict = true;
                             DialogResult = DialogResult.Cancel;
@@ -125,21 +122,18 @@ namespace BombonesApp2026.Windows
                         }
                         if (resultadoEditar.IsFailure)
                         {
-                            ErrorHelper.MostrarErrores(resultadoEditar.Errors);
+                            _servicioMensajes.Errores(resultadoEditar.Errors);
                             return;
                         }
                         DataChanged = true;
-                        MessageBox.Show("Registro editado satisfactoriamente",
-                            "Mensaje",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        _servicioMensajes.Informacion("Registro editado satisfactoriamente");
                         DialogResult = DialogResult.OK;
                     }
                 }
                 catch (Exception ex)
                 {
 
-                    MessageBox.Show(ex.Message,
-                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _servicioMensajes.Error(ex.Message);
                 }
             }
         }
@@ -190,18 +184,14 @@ namespace BombonesApp2026.Windows
             return valido;
         }
 
-        public void SetBombon(Servicios.DTOs.Bombon.BombonUpdateDto? bombonDto)
+        public void SetBombon(BombonUpdateDto? bombonDto)
         {
             _bombonDto = bombonDto;
         }
-        public Servicios.DTOs.Bombon.BombonUpdateDto? GetBombon()
+        public BombonUpdateDto? GetBombon()
         {
             return _bombonDto;
         }
 
-        internal void SetCaja(Servicios.DTOs.Caja.CajaUpdateDto? cajaEditDto)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

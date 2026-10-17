@@ -8,6 +8,7 @@ namespace BombonesApp2026.Windows
     public partial class frmClienteAe : Form
     {
         private readonly IClienteServicio _clienteServicio;
+        private ServicioMensajes _servicioMensajes = new();
         private ClienteUpdateDto? _clienteUpdateDto;
         public frmClienteAe(IClienteServicio clienteServicio)
         {
@@ -67,16 +68,13 @@ namespace BombonesApp2026.Windows
                         var resultadoAgregar = _clienteServicio.Agregar(_clienteCreateDto);
                         if (resultadoAgregar.IsFailure)
                         {
-                            ErrorHelper.MostrarErrores(resultadoAgregar.Errors);
+                            _servicioMensajes.Errores(resultadoAgregar.Errors);
                             return;
                         }
                         DataChanged = true;
                         UltimoId = resultadoAgregar.Value;
-                        var respuestaAgregarOtro = MessageBox.Show("Registro agregado\n¿Desea agregar otro?",
-                                "Mensaje", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                                MessageBoxDefaultButton.Button2);
-                        if (respuestaAgregarOtro == DialogResult.No)
-                        {
+                        if(!_servicioMensajes.Confirmar("Registro agregado\n¿Desea agregar otro?"))
+                        { 
                             DialogResult = DialogResult.OK;
                         }
                         InicializarControles();
@@ -103,7 +101,7 @@ namespace BombonesApp2026.Windows
                             .Editar(_clienteUpdateDto);
                         if (resultadoEditar.IsConcurrencyConflict)
                         {
-                            ErrorHelper.MostrarErrores(resultadoEditar.Errors);
+                            _servicioMensajes.Errores(resultadoEditar.Errors);
 
                             ConcurrencyConflict = true;
                             DialogResult = DialogResult.Cancel;
@@ -113,21 +111,18 @@ namespace BombonesApp2026.Windows
                         }
                         if (resultadoEditar.IsFailure)
                         {
-                            ErrorHelper.MostrarErrores(resultadoEditar.Errors);
+                            _servicioMensajes.Errores(resultadoEditar.Errors);
                             return;
                         }
                         DataChanged = true;
-                        MessageBox.Show("Registro editado satisfactoriamente",
-                            "Mensaje",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        _servicioMensajes.Informacion("Registro editado satisfactoriamente");
                         DialogResult = DialogResult.OK;
                     }
                 }
                 catch (Exception ex)
                 {
 
-                    MessageBox.Show(ex.Message,
-                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _servicioMensajes.Error(ex.Message);
                 }
             }
         }

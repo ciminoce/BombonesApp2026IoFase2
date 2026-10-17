@@ -2,7 +2,6 @@
 using BombonesApp2026.Servicios.DTOs.TipoBombon;
 using BombonesApp2026.Servicios.Intefaces;
 using BombonesApp2026.Windows.Helpers;
-using BombonesApp2026.Windows.Helpers.BombonesApp2026.Windows.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BombonesApp2026.Windows
@@ -59,7 +58,7 @@ namespace BombonesApp2026.Windows
 
                     if (resultadoConsulta.IsFailure)
                     {
-                        ErrorHelper.MostrarErrores(resultadoConsulta.Errors);
+                        _servicioMensajes.Errores(resultadoConsulta.Errors);
                         return;
                     }
 
@@ -79,7 +78,7 @@ namespace BombonesApp2026.Windows
 
                         if (resultadoConsulta.IsFailure)
                         {
-                            ErrorHelper.MostrarErrores(resultadoConsulta.Errors);
+                            _servicioMensajes.Errores(resultadoConsulta.Errors);
                             return;
                         }
 
@@ -170,7 +169,7 @@ namespace BombonesApp2026.Windows
                 var resultadoConsulta = tipoBombonServicio.ObtenerParaBorrar(tipoListDto.TipoBombonId);
                 if (resultadoConsulta.IsFailure)
                 {
-                    ErrorHelper.MostrarErrores(resultadoConsulta.Errors);
+                    _servicioMensajes.Errores(resultadoConsulta.Errors);
                     return;
 
                 }
@@ -182,14 +181,14 @@ namespace BombonesApp2026.Windows
                         .Borrar(tipoDeleteDto!);
                     if (resultadoEliminacion.IsConcurrencyConflict)
                     {
-                        ErrorHelper.MostrarErrores(resultadoEliminacion.Errors);
+                        _servicioMensajes.Errores(resultadoEliminacion.Errors);
                         RecargarGrilla();
                         return;
 
                     }
                     if (resultadoEliminacion.IsFailure)
                     {
-                        ErrorHelper.MostrarErrores(resultadoEliminacion.Errors);
+                        _servicioMensajes.Errores(resultadoEliminacion.Errors);
                         return;
 
                     }
@@ -223,7 +222,7 @@ namespace BombonesApp2026.Windows
                             var resultado = tipoServicio.ObtenerPaginaRegistro(nuevoId, _estado.RegistrosPorPagina);
                             if (resultado.IsFailure)
                             {
-                                ErrorHelper.MostrarErrores(resultado.Errors);
+                                _servicioMensajes.Errores(resultado.Errors);
                                 return;
                             }
                             _estado.PaginaActual = resultado.Value;
@@ -264,7 +263,7 @@ namespace BombonesApp2026.Windows
                         .ObtenerParaEditar(tipoListDto.TipoBombonId);
                     if (resultadoConsulta.IsFailure)
                     {
-                        ErrorHelper.MostrarErrores(resultadoConsulta.Errors);
+                        _servicioMensajes.Errores(resultadoConsulta.Errors);
                         return;
                     }
                     var tipoEditDto = resultadoConsulta.Value;
@@ -286,7 +285,7 @@ namespace BombonesApp2026.Windows
                                 filtroActivo);
                             if (resultadoConsulta.IsFailure)
                             {
-                                ErrorHelper.MostrarErrores(resultadoPagina.Errors);
+                                _servicioMensajes.Errores(resultadoPagina.Errors);
                                 return;
                             }
                             _estado.PaginaActual = resultadoPagina.Value;
@@ -311,10 +310,7 @@ namespace BombonesApp2026.Windows
                         }
                         else
                         {
-                            MessageBox.Show("El registro editado no se puede mostrar\npor condición de filtro o búsqueda",
-                                "Advertencia",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
+                            _servicioMensajes.Advertencia("El registro editado no se puede mostrar\npor condición de filtro o búsqueda");
                         }
                     }
 
@@ -322,8 +318,7 @@ namespace BombonesApp2026.Windows
                 catch (Exception ex)
                 {
 
-                    MessageBox.Show(ex.Message, "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _servicioMensajes.Error(ex.Message);
                 }
             }
         }

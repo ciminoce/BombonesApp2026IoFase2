@@ -9,6 +9,7 @@ namespace BombonesApp2026.Windows
         private FormaDePagoUpdateDto? _formDePagoUpdateDto;
         private readonly IFormaDePagoServicio _formaServicio;
         private bool _esEdicion = false;
+        private ServicioMensajes _servicioMensajes = new();
         public frmFormaDePagoAe(IFormaDePagoServicio formaServicio)
         {
             InitializeComponent();
@@ -60,15 +61,12 @@ namespace BombonesApp2026.Windows
                         var resultadoAgregar = _formaServicio.Agregar(_formaDePagoCreateDto);
                         if (resultadoAgregar.IsFailure)
                         {
-                            ErrorHelper.MostrarErrores(resultadoAgregar.Errors);
+                            _servicioMensajes.Errores(resultadoAgregar.Errors);
                             return;
                         }
                         DataChanged = true;
-                        var respuestaAgregarOtro = MessageBox.Show("Registro agregado\n¿Desea agregar otro?",
-                                "Mensaje", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                                MessageBoxDefaultButton.Button2);
-                        if (respuestaAgregarOtro == DialogResult.No)
-                        {
+                        if(!_servicioMensajes.Confirmar("Registro agregado\n¿Desea agregar otro?"))
+                        { 
                             DialogResult = DialogResult.OK;
                         }
                         InicializarControles();
@@ -87,21 +85,18 @@ namespace BombonesApp2026.Windows
                             .Editar(_formDePagoUpdateDto);
                         if (resultadoEditar.IsFailure)
                         {
-                            ErrorHelper.MostrarErrores(resultadoEditar.Errors);
+                            _servicioMensajes.Errores(resultadoEditar.Errors);
                             return;
                         }
                         DataChanged = true;
-                        MessageBox.Show("Registro editado satisfactoriamente",
-                            "Mensaje",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        _servicioMensajes.Informacion("Registro editado satisfactoriamente");
                         DialogResult = DialogResult.OK;
                     }
                 }
                 catch (Exception ex)
                 {
 
-                    MessageBox.Show(ex.Message,
-                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _servicioMensajes.Error(ex.Message);
                 }
 
             }

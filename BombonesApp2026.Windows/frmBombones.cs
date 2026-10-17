@@ -3,7 +3,6 @@ using BombonesApp2026.Servicios.DTOs.Bombon;
 using BombonesApp2026.Servicios.DTOs.Cliente;
 using BombonesApp2026.Servicios.Intefaces;
 using BombonesApp2026.Windows.Helpers;
-using BombonesApp2026.Windows.Helpers.BombonesApp2026.Windows.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using System.Data;
 
@@ -64,7 +63,7 @@ namespace BombonesApp2026.Windows
 
                     if (resultadoConsulta.IsFailure)
                     {
-                        ErrorHelper.MostrarErrores(resultadoConsulta.Errors);
+                        _servicioMensajes.Errores(resultadoConsulta.Errors);
                         return;
                     }
 
@@ -85,7 +84,7 @@ namespace BombonesApp2026.Windows
 
                         if (resultadoConsulta.IsFailure)
                         {
-                            ErrorHelper.MostrarErrores(resultadoConsulta.Errors);
+                            _servicioMensajes.Errores(resultadoConsulta.Errors);
                             return;
                         }
 
@@ -175,7 +174,7 @@ namespace BombonesApp2026.Windows
                 var resultadoConsulta = bombonServicio.ObtenerParaBorrar(bombonListDto.ProductoId);
                 if (resultadoConsulta.IsFailure)
                 {
-                    ErrorHelper.MostrarErrores(resultadoConsulta.Errors);
+                    _servicioMensajes.Errores(resultadoConsulta.Errors);
                     return;
 
                 }
@@ -188,14 +187,14 @@ namespace BombonesApp2026.Windows
                         .Borrar(bombonDeleteDto);
                     if (resultadoEliminacion.IsConcurrencyConflict)
                     {
-                        ErrorHelper.MostrarErrores(resultadoEliminacion.Errors);
+                        _servicioMensajes.Errores(resultadoEliminacion.Errors);
                         RecargarGrilla();
                         return;
 
                     }
                     if (resultadoEliminacion.IsFailure)
                     {
-                        ErrorHelper.MostrarErrores(resultadoEliminacion.Errors);
+                        _servicioMensajes.Errores(resultadoEliminacion.Errors);
                         return;
 
                     }
@@ -229,7 +228,7 @@ namespace BombonesApp2026.Windows
                             var resultado = tipoServicio.ObtenerPaginaRegistro(nuevoId, _estado.RegistrosPorPagina);
                             if (resultado.IsFailure)
                             {
-                                ErrorHelper.MostrarErrores(resultado.Errors);
+                                _servicioMensajes.Errores(resultado.Errors);
                                 return;
                             }
                             _estado.PaginaActual = resultado.Value;
@@ -256,13 +255,9 @@ namespace BombonesApp2026.Windows
 
         private void tsbEditar_Click(object sender, EventArgs e)
         {
-            if (_bindingSource.Current == null)
-            {
-                MessageBox.Show("Debe seleccionar una fila de la grilla",
-                    "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            var bombonListDto = (BombonListDto)_bindingSource.Current;
+            var bombonListDto = _bindingSource
+                .ObtenerSeleccionado<BombonListDto>(_servicioMensajes);
+            if (bombonListDto is null) return;
             var seleccionadoId = bombonListDto.ProductoId;
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -274,7 +269,7 @@ namespace BombonesApp2026.Windows
                         .ObtenerParaEditar(bombonListDto.ProductoId);
                     if (resultadoConsulta.IsFailure)
                     {
-                        ErrorHelper.MostrarErrores(resultadoConsulta.Errors);
+                        _servicioMensajes.Errores(resultadoConsulta.Errors);
                         return;
                     }
                     var bombonEditDto = resultadoConsulta.Value;
@@ -296,7 +291,7 @@ namespace BombonesApp2026.Windows
                                 filtroActivo);
                             if (resultadoConsulta.IsFailure)
                             {
-                                ErrorHelper.MostrarErrores(resultadoPagina.Errors);
+                                _servicioMensajes.Errores(resultadoPagina.Errors);
                                 return;
                             }
                             _estado.PaginaActual = resultadoPagina.Value;
@@ -321,9 +316,8 @@ namespace BombonesApp2026.Windows
                         }
                         else
                         {
-                            MessageBox.Show("El registro editado no se puede mostrar\npor condición de filtro o búsqueda",
-                                "Advertencia",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            _servicioMensajes.Advertencia("El registro editado no se puede mostrar" +
+                                "\npor condición de filtro o búsqueda");
 
                         }
                     }
@@ -332,8 +326,7 @@ namespace BombonesApp2026.Windows
                 catch (Exception ex)
                 {
 
-                    MessageBox.Show(ex.Message, "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _servicioMensajes.Error(ex.Message);
                 }
             }
         }
@@ -366,10 +359,7 @@ namespace BombonesApp2026.Windows
         {
             if (string.IsNullOrWhiteSpace(txtBuscar.Text))
             {
-                MessageBox.Show("Debe poner un texto para efectuar la búsqueda",
-                    "Advertencia",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                _servicioMensajes.Advertencia("Debe poner un texto para efectuar la búsqueda");
             }
             textoBuscar = txtBuscar.Text;
             tsbBuscar.BackColor = Color.Orange;

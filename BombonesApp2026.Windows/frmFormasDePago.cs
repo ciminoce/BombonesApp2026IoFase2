@@ -1,7 +1,6 @@
 ﻿using BombonesApp2026.Servicios.DTOs.FormaDePago;
 using BombonesApp2026.Servicios.Intefaces;
 using BombonesApp2026.Windows.Helpers;
-using BombonesApp2026.Windows.Helpers.BombonesApp2026.Windows.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BombonesApp2026.Windows
@@ -42,29 +41,28 @@ namespace BombonesApp2026.Windows
             {
                 var formaDePagoServicio = scope.ServiceProvider
                         .GetRequiredService<IFormaDePagoServicio>();
-                var dr = MessageBox.Show($"¿Desea borrar la forma de pago {formaListDto.Nombre}?",
-                    "Confirmar Borrado", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                    MessageBoxDefaultButton.Button2);
-                if (dr == DialogResult.No) return;
+                if(!_servicioMensajes.Confirmar($"¿Desea borrar la forma de pago" +
+                    $" {formaListDto.Nombre}?"))
+                {
+                    return;
+                }
                 try
                 {
                     var resultadoEliminacion = formaDePagoServicio
                         .Borrar(formaListDto.FormaDePagoId!);
                     if (resultadoEliminacion.IsFailure)
                     {
-                        ErrorHelper.MostrarErrores(resultadoEliminacion.Errors);
+                        _servicioMensajes.Errores(resultadoEliminacion.Errors);
                         return;
 
                     }
-                    MessageBox.Show("Registro eliminado satisfactoriamente",
-                        "Mensaje",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    _servicioMensajes.Informacion("Registro eliminado satisfactoriamente");
                     RecargarGrilla();
                 }
                 catch (Exception ex)
                 {
 
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _servicioMensajes.Error(ex.Message);
                 }
             }
         }
@@ -74,7 +72,8 @@ namespace BombonesApp2026.Windows
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                using (frmFormaDePagoAe frm = scope.ServiceProvider.GetRequiredService<frmFormaDePagoAe>())
+                using (frmFormaDePagoAe frm = scope.ServiceProvider
+                    .GetRequiredService<frmFormaDePagoAe>())
                 {
                     frm.Text = "Nuevo Tipo de Bombón";
                     frm.ShowDialog();
@@ -102,7 +101,7 @@ namespace BombonesApp2026.Windows
                         .ObtenerParaEditar(formaListDto.FormaDePagoId);
                     if (resultadoConsulta.IsFailure)
                     {
-                        ErrorHelper.MostrarErrores(resultadoConsulta.Errors);
+                        _servicioMensajes.Errores(resultadoConsulta.Errors);
                         return;
                     }
                     var formaEditDto = resultadoConsulta.Value;
@@ -123,8 +122,7 @@ namespace BombonesApp2026.Windows
                 catch (Exception ex)
                 {
 
-                    MessageBox.Show(ex.Message, "Error",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _servicioMensajes.Error(ex.Message, "Error");
                 }
             }
         }
@@ -149,7 +147,7 @@ namespace BombonesApp2026.Windows
 
                     if (resultadoConsulta.IsFailure)
                     {
-                        ErrorHelper.MostrarErrores(resultadoConsulta.Errors);
+                        _servicioMensajes.Errores(resultadoConsulta.Errors);
                         return;
                     }
 
@@ -169,7 +167,7 @@ namespace BombonesApp2026.Windows
 
                         if (resultadoConsulta.IsFailure)
                         {
-                            ErrorHelper.MostrarErrores(resultadoConsulta.Errors);
+                            _servicioMensajes.Errores(resultadoConsulta.Errors);
                             return;
                         }
 
@@ -190,11 +188,7 @@ namespace BombonesApp2026.Windows
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(
-                        ex.Message,
-                        "Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    _servicioMensajes.Error(ex.Message);
                 }
             }
         }
