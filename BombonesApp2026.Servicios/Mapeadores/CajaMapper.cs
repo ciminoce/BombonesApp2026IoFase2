@@ -1,8 +1,7 @@
 ﻿using BombonesApp2026.Entidades;
 using BombonesApp2026.Servicios.DTOs.Caja;
-using BombonesApp2026.Servicios.Mapeadores;
 
-namespace CajaesApp2026.Servicios.Mapeadores
+namespace BombonesApp2026.Servicios.Mapeadores
 {
     public static class CajaMapper
     {
@@ -61,8 +60,11 @@ namespace CajaesApp2026.Servicios.Mapeadores
                 ProductoId = caja.ProductoId,
                 Nombre = caja.Nombre,
                 Descripcion = caja.Descripcion,
+                Stock=caja.Stock,
                 Activo = caja.Activo,
-                RowVersion = caja.RowVersion
+                RowVersion = caja.RowVersion,
+                Detalles=caja.Detalles
+                    .Select(d=>d.ToDto()).ToList()
             };
         }
         public static CajaDeleteDto ToDeleteDto(this Caja caja)

@@ -1,6 +1,6 @@
 ﻿using BombonesApp2026.Servicios.DTOs.Caja;
+using BombonesApp2026.Servicios.Intefaces;
 using BombonesApp2026.Windows.Helpers;
-using CajaesApp2026.Servicios.Intefaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Data;
 
@@ -253,6 +253,7 @@ namespace BombonesApp2026.Windows
                         return;
                     }
                     var cajaEditDto = resultadoConsulta.Value;
+                    if (cajaEditDto is null) return;
                     using (frmCajaAe frm = scope.ServiceProvider
                         .GetRequiredService<frmCajaAe>())
                     {

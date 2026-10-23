@@ -4,8 +4,6 @@ using BombonesApp2026.Servicios.Intefaces;
 using BombonesApp2026.Servicios.Mapeadores;
 using BombonesApp2026.Windows.Classes;
 using BombonesApp2026.Windows.Helpers;
-using CajaesApp2026.Servicios.Intefaces;
-using CajaesApp2026.Servicios.Mapeadores;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BombonesApp2026.Windows
@@ -49,11 +47,20 @@ namespace BombonesApp2026.Windows
                 txtNombreCaja.Text = _cajaDto.Nombre;
                 txtDescripcion.Text = _cajaDto.Descripcion;
                 chkActivo.Checked = _cajaDto.Activo;
+                nudStock.Value=_cajaDto.Stock;
+                _bindingSource.DataSource = _cajaDto.Detalles;
+                CalcularYMostrarDatos(_cajaDto.Detalles);
                 _esEdicion = true;
 
             }
         }
 
+        private void CalcularYMostrarDatos(List<DetalleCajaDto> detalles)
+        {
+            txtCantidadBombones.Text = detalles.Sum(d => d.CantidadBombon).ToString();
+            txtSurtida.Text = detalles.Count > 1 ? "Sí" : "No";
+            txtPrecio.Text = (Math.Ceiling(detalles.Sum(d => d.Subtotal) * 1.2m / 100) * 100).ToString();
+        }
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
@@ -104,6 +111,8 @@ namespace BombonesApp2026.Windows
                         _cajaDto.Nombre = txtNombreCaja.Text;
                         _cajaDto.Descripcion = txtDescripcion.Text;
                         _cajaDto.Activo = chkActivo.Checked;
+                        _cajaDto.Stock = (int)nudStock.Value;
+                        _cajaDto.Detalles = _editorCaja.ObtenerDetalles();
 
                         var resultadoEditar = _cajaServicio
                             .Editar(_cajaDto);
@@ -157,21 +166,6 @@ namespace BombonesApp2026.Windows
                 valido = false;
                 errorProvider1.SetError(txtNombreCaja, "El nombre es requerido");
             }
-            else if (txtNombreCaja.Text.Length > 100)
-            {
-                valido = false;
-                errorProvider1.SetError(txtNombreCaja, "El nombre debe tener no más de 100 caracteres");
-            }
-            if (txtDescripcion.Text.Length > 250)
-            {
-                valido = false;
-                errorProvider1.SetError(txtDescripcion, "La descripción no puede tener más de 250 caracteres");
-            }
-            if (!decimal.TryParse(txtPrecio.Text, out decimal precio) || precio <= 0)
-            {
-                valido = false;
-                errorProvider1.SetError(txtPrecio, "Precio no válido o fuera de rango");
-            }
 
             return valido;
         }
@@ -181,9 +175,10 @@ namespace BombonesApp2026.Windows
             return _cajaDto;
         }
 
-        internal void SetCaja(CajaUpdateDto? cajaDto)
+        internal void SetCaja(CajaUpdateDto cajaDto)
         {
             _cajaDto = cajaDto;
+            _editorCaja = new EditorCaja(cajaDto);
         }
         public void InicializarEditor()
         {

@@ -46,10 +46,24 @@ namespace BombonesApp2026.Datos.Repositorios
         public override Caja? ObtenerPorId(int id)
         {
             return _context.Cajas
-                            .Include(c => c.Detalles)
-                            .ThenInclude(d => d.Bombon)
-                            .FirstOrDefault(c => c.ProductoId == id);
+                .Include(c => c.Detalles)
+                .ThenInclude(d => d.Bombon)
+                .AsNoTracking()
+                .FirstOrDefault(c => c.ProductoId == id);
                             
+        }
+        public Caja? ObtenerCajaConDetalles(int id)
+        {
+            return _context.Cajas
+                .Include(c => c.Detalles)
+                .ThenInclude(d => d.Bombon)
+                .FirstOrDefault(c => c.ProductoId == id);
+
+        }
+
+        public void EliminarDetalle(DetalleCaja itemCaja)
+        {
+            _context.Set<DetalleCaja>().Remove(itemCaja);
         }
     }
 }

@@ -2,8 +2,9 @@
 using BombonesApp2026.Entidades;
 using BombonesApp2026.Servicios.Common;
 using BombonesApp2026.Servicios.DTOs.Caja;
-using CajaesApp2026.Servicios.Intefaces;
-using CajaesApp2026.Servicios.Mapeadores;
+using BombonesApp2026.Servicios.DTOs.DetalleCaja;
+using BombonesApp2026.Servicios.Intefaces;
+using BombonesApp2026.Servicios.Mapeadores;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -35,31 +36,31 @@ namespace BombonesApp2026.Servicios.Servicios
                 var errores = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
                 return Result<int>.Failure(errores);
             }
-            var listaErrores=new List<string>();
-            foreach (var itemDetalle in cajaDto.Detalles)
-            {
-                if (itemDetalle.CantidadBombon <= 0)
-                {
-                    listaErrores.Add($"La cantidad del bombón {itemDetalle.NombreBombon} es menor a cero");
-                }
-            }
-            foreach (var itemDetalle in cajaDto.Detalles)
-            {
-                var bombon = _unitOfWork.Bombones
-                    .ObtenerPorId(itemDetalle.BombonId);
-                if(bombon is null)
-                {
-                    listaErrores.Add($"El bombón con ID {itemDetalle.BombonId} no existe");
-                }
-                if (!bombon.Activo)
-                {
-                    listaErrores.Add($"El bombón con ID {itemDetalle.BombonId} no se encuentra activo");
-                }
-            }
-            if (listaErrores.Any())
-            {
-                return Result<int>.Failure(listaErrores);
-            }
+            //var listaErrores=new List<string>();
+            //foreach (var itemDetalle in cajaDto.Detalles)
+            //{
+            //    if (itemDetalle.CantidadBombon <= 0)
+            //    {
+            //        listaErrores.Add($"La cantidad del bombón {itemDetalle.NombreBombon} es menor a cero");
+            //    }
+            //}
+            //foreach (var itemDetalle in cajaDto.Detalles)
+            //{
+            //    var bombon = _unitOfWork.Bombones
+            //        .ObtenerPorId(itemDetalle.BombonId);
+            //    if(bombon is null)
+            //    {
+            //        listaErrores.Add($"El bombón con ID {itemDetalle.BombonId} no existe");
+            //    }
+            //    if (!bombon.Activo)
+            //    {
+            //        listaErrores.Add($"El bombón con ID {itemDetalle.BombonId} no se encuentra activo");
+            //    }
+            //}
+            //if (listaErrores.Any())
+            //{
+            //    return Result<int>.Failure(listaErrores);
+            //}
 
             // 2. Crear la entidad
             Caja caja = new Caja
@@ -70,9 +71,18 @@ namespace BombonesApp2026.Servicios.Servicios
                 Activo = true
             };
             //3. Agregar Detalles a la caja
-            foreach (var item in cajaDto.Detalles)
+            try
             {
-                caja.AgregarBombon(item.BombonId, item.CantidadBombon);
+                foreach (var item in cajaDto.Detalles)
+                {
+                    caja.AgregarBombon(item.BombonId, item.CantidadBombon);
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return Result<int>.Failure(ex.Message);
             }
             // 4. Regla de negocio
             if (_unitOfWork.Cajas.Existe(caja))
@@ -92,10 +102,10 @@ namespace BombonesApp2026.Servicios.Servicios
             }
         }
 
-        public Result Editar(CajaUpdateDto CajaDto)
+        public Result Editar(CajaUpdateDto cajaDto)
         {
             // 1. Validar el DTO de actualización
-            var validationResult = _updateValidator.Validate(CajaDto);
+            var validationResult = _updateValidator.Validate(cajaDto);
             if (!validationResult.IsValid)
             {
                 var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
@@ -103,34 +113,65 @@ namespace BombonesApp2026.Servicios.Servicios
             }
 
             // 2. Obtener la entidad persistida
-            var caja = _unitOfWork.Cajas.ObtenerPorId(CajaDto.ProductoId);
+            var caja = _unitOfWork.Cajas.ObtenerCajaConDetalles(cajaDto.ProductoId);
             if (caja == null)
             {
-                return Result.Failure("Caja no encontrado.");
+                return Result.Failure("Caja no encontrada.");
             }
 
             // 3. Actualizar valores
-            caja.Nombre = CajaDto.Nombre;
-            caja.Descripcion = CajaDto.Descripcion;
-            caja.Stock = CajaDto.Stock;
-            caja.Activo = CajaDto.Activo;
-            caja.RowVersion = CajaDto.RowVersion;
+            caja.Nombre = cajaDto.Nombre;
+            caja.Descripcion = cajaDto.Descripcion;
+            caja.Stock = cajaDto.Stock;
+            caja.Activo = cajaDto.Activo;
+            caja.RowVersion = cajaDto.RowVersion;
 
             // 4. Regla de negocio para duplicados en edición
             if (_unitOfWork.Cajas.Existe(caja))
             {
-                return Result.Failure("Ya existe otro Caja registrado con los mismos datos.");
+                return Result.Failure("Ya existe otra caja registrada con los mismos datos.");
             }
-
+            ActualizarDetalles(caja, cajaDto.Detalles);
             try
             {
-                _unitOfWork.Cajas.Editar(caja, caja.ProductoId);
                 _unitOfWork.Save();
                 return Result.Success();
             }
             catch (Exception ex)
             {
                 return Result.Failure($"Error al intentar editar el Caja: {ex.Message}");
+            }
+        }
+
+        private void ActualizarDetalles(Caja caja, List<DetalleCajaDto> detalles)
+        {
+            //1.Borrar los que no están
+            foreach (var itemCaja in caja.Detalles.ToList())
+            {
+                var existe = detalles.Any(d => d.BombonId == itemCaja.BombonId);
+                if (!existe)
+                {
+                    _unitOfWork.Cajas.EliminarDetalle(itemCaja);
+                    caja.EliminarBombon(itemCaja.BombonId);
+                }
+            }
+            //2.Actualizar los que haya que actualizar
+            foreach (var itemDto in detalles)
+            {
+                var detalleEnCaja = caja.Detalles.FirstOrDefault(
+                    d => d.BombonId == itemDto.BombonId);
+                if (detalleEnCaja is null) continue;
+                caja.ModificarCantidadBombon(itemDto.BombonId,
+                    itemDto.CantidadBombon);
+            }
+            //3.Agregar los que hay que agregar
+            foreach (var itemDto in detalles)
+            {
+                var detalleEnCaja = caja.Detalles.FirstOrDefault(
+                    d => d.BombonId == itemDto.BombonId);
+                if (detalleEnCaja is not null) continue;
+                caja.AgregarBombon(itemDto.BombonId, itemDto.CantidadBombon);
+
             }
         }
 

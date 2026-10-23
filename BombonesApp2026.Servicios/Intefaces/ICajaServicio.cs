@@ -1,7 +1,7 @@
 ﻿using BombonesApp2026.Servicios.Common;
 using BombonesApp2026.Servicios.DTOs.Caja;
 
-namespace CajaesApp2026.Servicios.Intefaces
+namespace BombonesApp2026.Servicios.Intefaces
 {
     public interface ICajaServicio
     {
