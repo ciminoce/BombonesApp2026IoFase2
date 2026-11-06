@@ -5,7 +5,7 @@ namespace BombonesApp2026.Servicios.Mapeadores
 {
     public static class FormaDePagoMapper
     {
-        public static FormaDePagoListDto ToListDto(FormaDePago formaDePago)
+        public static FormaDePagoListDto ToListDto(this FormaDePago formaDePago)
         {
             return new FormaDePagoListDto
             {
@@ -14,7 +14,7 @@ namespace BombonesApp2026.Servicios.Mapeadores
                 Activo = formaDePago.Activo,
             };
         }
-        public static FormaDePago ToEntidad(FormaDePagoCreateDto formaDePagoDto)
+        public static FormaDePago ToEntidad(this FormaDePagoCreateDto formaDePagoDto)
         {
             return new FormaDePago
             {
@@ -22,7 +22,7 @@ namespace BombonesApp2026.Servicios.Mapeadores
                 Activo=formaDePagoDto.Activo
             };
         }
-        public static FormaDePago ToEntidad(FormaDePagoUpdateDto formaDePagoDto)
+        public static FormaDePago ToEntidad(this FormaDePagoUpdateDto formaDePagoDto)
         {
             return new FormaDePago
             {
@@ -32,7 +32,7 @@ namespace BombonesApp2026.Servicios.Mapeadores
             };
         }
 
-        public static FormaDePagoUpdateDto ToUpdateDto(FormaDePago formaDePago)
+        public static FormaDePagoUpdateDto ToUpdateDto(this FormaDePago formaDePago)
         {
             return new FormaDePagoUpdateDto
             {

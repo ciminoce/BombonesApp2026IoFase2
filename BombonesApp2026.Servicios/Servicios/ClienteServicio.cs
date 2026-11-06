@@ -1,5 +1,6 @@
 ﻿using BombonesApp2026.Datos;
 using BombonesApp2026.Entidades;
+using BombonesApp2026.Entidades.Enums;
 using BombonesApp2026.Servicios.Common;
 using BombonesApp2026.Servicios.DTOs.Cliente;
 using BombonesApp2026.Servicios.Intefaces;
@@ -36,7 +37,7 @@ namespace BombonesApp2026.Servicios.Servicios
             }
 
             // 2. Mapear a entidad
-            var cliente = ClienteMapper.ToEntidad(clienteDto);
+            var cliente = clienteDto.ToEntidad();
 
             // 3. Regla de negocio
             if (_unitOfWork.Clientes.Existe(cliente))
@@ -249,5 +250,40 @@ namespace BombonesApp2026.Servicios.Servicios
             }
         }
 
+        public Result<List<ClienteListDto>> ObtenerDatosCombo(ClienteDefault defaultCliente)
+        {
+            try
+            {
+                var lista = _unitOfWork.Clientes.ObtenerTodos()
+                    .Where(c => c.Activo) // Filtrar solo los clientes activos
+                .Select(c => c.ToListDto()).ToList();
+                if (defaultCliente == ClienteDefault.Todos)
+                {
+                    var clienteDefault = new ClienteListDto
+                    {
+                        ClienteId = 0,
+                        NombreCompleto = "Todos"
+                    };
+                    lista.Insert(0, clienteDefault);
+
+                }
+                else
+                {
+                    var clienteDefault = new ClienteListDto
+                    {
+                        ClienteId = 0,
+                        NombreCompleto = "Seleccione"
+                    };
+                    lista.Insert(0, clienteDefault);
+                }
+                return Result<List<ClienteListDto>>.Success(lista);
+
+            }
+            catch (Exception ex)
+            {
+                return Result<List<ClienteListDto>>
+                    .Failure($"Error al poblar los datos del combo de clientes: {ex.Message}");
+            }
+        }
     }
 }

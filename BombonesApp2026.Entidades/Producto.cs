@@ -73,6 +73,6 @@ namespace BombonesApp2026.Entidades
         }
 
         public abstract string MostrarDatos();
-
+        public List<DetalleVenta> DetalleVentas { get; set; } = new();
     }
 }

@@ -68,11 +68,21 @@ namespace BombonesApp2026.Windows
 
         private void btnCajas_Click(object sender, EventArgs e)
         {
-            using (var frm=_serviceProvider.GetRequiredService<frmCajas>())
+            using (var frm = _serviceProvider.GetRequiredService<frmCajas>())
             {
                 frm.Text = "Listado de Cajas";
                 frm.ShowDialog();
             }
+        }
+
+        private void btnVentas_Click(object sender, EventArgs e)
+        {
+            using (var frm = _serviceProvider.GetRequiredService<frmVentas>())
+            {
+                frm.Text = "Listado de Ventas";
+                frm.ShowDialog();
+            }
+
         }
     }
 }

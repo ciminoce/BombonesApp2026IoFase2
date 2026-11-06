@@ -1,5 +1,6 @@
 ﻿using BombonesApp2026.Datos;
 using BombonesApp2026.Entidades;
+using BombonesApp2026.Entidades.Enums;
 using BombonesApp2026.Servicios.Common;
 using BombonesApp2026.Servicios.DTOs.FormaDePago;
 using BombonesApp2026.Servicios.Intefaces;
@@ -218,5 +219,43 @@ namespace BombonesApp2026.Servicios.Servicios
                 return Result<ResultadoPaginacionDto<FormaDePagoListDto>>.Failure(ex.Message);
             }
         }
+
+
+        public Result<List<FormaDePagoListDto>> ObtenerDatosCombo(FormaDePagoDefault formaDefault)
+        {
+            try
+            {
+                var lista = _unitOfWork.FormasDePago.ObtenerTodos()
+                    .Where(c => c.Activo) // Filtrar solo las formas de pago activas
+                .Select(b => b.ToListDto()).ToList();
+                if (formaDefault == FormaDePagoDefault.Todos)
+                {
+                    var formaDePagoDefault = new FormaDePagoListDto
+                    {
+                        FormaDePagoId = 0,
+                        Nombre = "Todos"
+                    };
+                    lista.Insert(0, formaDePagoDefault);
+
+                }
+                else
+                {
+                    var formaDePagoDefault = new FormaDePagoListDto
+                    {
+                        FormaDePagoId = 0,
+                        Nombre = "Todos"
+                    };
+                    lista.Insert(0, formaDePagoDefault);
+                }
+                return Result<List<FormaDePagoListDto>>.Success(lista);
+
+            }
+            catch (Exception ex)
+            {
+                return Result<List<FormaDePagoListDto>>
+                    .Failure($"Error al poblar los datos del combo de formas de pago: {ex.Message}");
+            }
+        }
+
     }
 }

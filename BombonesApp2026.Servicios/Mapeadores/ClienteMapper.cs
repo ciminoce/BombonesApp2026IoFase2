@@ -6,7 +6,7 @@ namespace BombonesApp2026.Servicios.Mapeadores
     //TODO:Hacerlo con métodos de extensión
     public static class ClienteMapper
     {
-        public static ClienteDetailsDto ToDetailsDto(Cliente cliente)
+        public static ClienteDetailsDto ToDetailsDto(this Cliente cliente)
         {
             return new ClienteDetailsDto
             {
@@ -20,7 +20,7 @@ namespace BombonesApp2026.Servicios.Mapeadores
                 Activo = cliente.Activo
             };
         }
-        public static ClienteListDto ToListDto(Cliente cliente)
+        public static ClienteListDto ToListDto(this Cliente cliente)
         {
             return new ClienteListDto
             {
@@ -28,10 +28,13 @@ namespace BombonesApp2026.Servicios.Mapeadores
                 NombreCompleto = $"{cliente.Nombre} {cliente.Apellido}",
                 Telefono = cliente.Telefono,
                 Email = cliente.Email,
-                Activo = cliente.Activo
+                Activo = cliente.Activo,
+                Direccion = $"{cliente.Calle} {cliente.Numero}",
+                Localidad = cliente.Localidad,
+                Provincia = cliente.Provincia
             };
         }
-        public static Cliente ToEntidad(ClienteCreateDto clienteDto)
+        public static Cliente ToEntidad(this ClienteCreateDto clienteDto)
         {
             return new Cliente
             {
@@ -47,7 +50,7 @@ namespace BombonesApp2026.Servicios.Mapeadores
                 CodigoPostal = clienteDto.CodigoPostal
             };
         }
-        public static Cliente ToEntidad(ClienteUpdateDto clienteDto)
+        public static Cliente ToEntidad(this ClienteUpdateDto clienteDto)
         {
             return new Cliente
             {

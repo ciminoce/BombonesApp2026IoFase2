@@ -200,5 +200,6 @@ namespace BombonesApp2026.Entidades
         public bool Activo { get; set; } = true;
 
         public byte[] RowVersion { get; set; } = null!;
+        public List<Venta> Ventas { get; set; } = new();
     }
 }

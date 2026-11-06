@@ -9,6 +9,8 @@ namespace BombonesApp2026.Datos
         IFormaDePagoRepositorio FormasDePago{ get; }
         IBombonRepositorio Bombones { get; }
         ICajaRepositorio Cajas { get; }
+        IVentaRepositorio Ventas { get; }
+        IProductoRepositorio Productos { get; }
         void Save();
     }
 }

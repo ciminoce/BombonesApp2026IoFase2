@@ -39,13 +39,17 @@ namespace BombonesApp2026.Ioc
             services.AddScoped<IBombonRepositorio, BombonRepositorio>();
             services.AddScoped<IBombonServicio, BombonServicio>();
             services.AddScoped<IValidator<BombonCreateDto>, BombonCreateDtoValidator>();
-            services.AddScoped<IValidator<Servicios.DTOs.Bombon.BombonUpdateDto>, BombonUpdateDtoValidator>();
+            services.AddScoped<IValidator<BombonUpdateDto>, BombonUpdateDtoValidator>();
 
             services.AddScoped<ICajaRepositorio, CajaRepositorio>();
             services.AddScoped<ICajaServicio, CajaServicio>();
             services.AddScoped<IValidator<CajaCreateDto>, CajaCreateDtoValidator>();
-            services.AddScoped<IValidator<Servicios.DTOs.Caja.CajaUpdateDto>, CajaUpdateDtoValidator>();
+            services.AddScoped<IValidator<CajaUpdateDto>, CajaUpdateDtoValidator>();
 
+            services.AddScoped<IVentaRepositorio, VentaRepositorio>();
+            services.AddScoped<IVentaServicio, VentaServicio>();
+            services.AddScoped<IProductoRepositorio, ProductoRepositorio>();
+            services.AddScoped<IProductoServicio, ProductoServicio>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

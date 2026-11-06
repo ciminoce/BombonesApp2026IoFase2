@@ -1,4 +1,5 @@
-﻿using BombonesApp2026.Servicios.Common;
+﻿using BombonesApp2026.Entidades.Enums;
+using BombonesApp2026.Servicios.Common;
 using BombonesApp2026.Servicios.DTOs.FormaDePago;
 
 namespace BombonesApp2026.Servicios.Intefaces
@@ -15,5 +16,6 @@ namespace BombonesApp2026.Servicios.Intefaces
         Result<ResultadoPaginacionDto<FormaDePagoListDto>> ObtenerPaginado(int paginaActual,
             int cantidadPorPagina, string campoOrdenar, bool esAscendente, bool? filtroActivo,
             string? textoBuscar = null);
+        Result<List<FormaDePagoListDto>> ObtenerDatosCombo(FormaDePagoDefault formaDefault);
     }
 }

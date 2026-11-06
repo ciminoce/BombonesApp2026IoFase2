@@ -26,5 +26,6 @@
         }
 
         public bool Activo { get; set; } = true;
+        public List<Venta> Ventas { get; set; } = new();
     }
 }
